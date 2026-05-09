@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const API = 'http://127.0.0.1:5000';
+const API = 'https://expert-booking-in8u.onrender.com';
 
 function ExpertList() {
   const [experts, setExperts] = useState([]);

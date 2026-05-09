@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { io } from 'socket.io-client';
 
-const API = 'http://127.0.0.1:5000';
+const API = 'https://expert-booking-in8u.onrender.com';
 const socket = io(API);
 
 function ExpertDetail() {
