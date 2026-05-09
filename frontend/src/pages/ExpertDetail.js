@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { io } from 'socket.io-client';
@@ -14,7 +14,7 @@ function ExpertDetail() {
   const [error, setError] = useState('');
   const [selectedSlot, setSelectedSlot] = useState(null);
 
-  const fetchExpert = async () => {
+  const fetchExpert = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/experts/${id}`);
       setExpert(res.data.data);
@@ -22,12 +22,11 @@ function ExpertDetail() {
       setError('Expert not found.');
     }
     setLoading(false);
-  };
+  }, [id]);
 
   useEffect(() => {
     fetchExpert();
 
-    // Real-time slot update
     socket.on('slotBooked', (data) => {
       if (data.expertId === id) {
         fetchExpert();
@@ -35,9 +34,8 @@ function ExpertDetail() {
     });
 
     return () => socket.off('slotBooked');
-  }, [id]);
+  }, [fetchExpert, id]);
 
-  // Group slots by date
   const groupedSlots = expert?.slots.reduce((acc, slot) => {
     if (!acc[slot.date]) acc[slot.date] = [];
     acc[slot.date].push(slot);

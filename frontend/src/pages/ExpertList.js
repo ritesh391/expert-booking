@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -14,7 +14,7 @@ function ExpertList() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const fetchExperts = async () => {
+  const fetchExperts = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -27,17 +27,16 @@ function ExpertList() {
       setError('Failed to load experts. Please try again.');
     }
     setLoading(false);
-  };
+  }, [search, category, page]);
 
   useEffect(() => {
     fetchExperts();
-  }, [search, category, page]);
+  }, [fetchExperts]);
 
   return (
     <div>
       <h1 className="page-title">Find an Expert</h1>
 
-      {/* Search and Filter */}
       <div className="search-bar">
         <input
           type="text"
@@ -54,11 +53,9 @@ function ExpertList() {
         </select>
       </div>
 
-      {/* Loading and Error */}
       {loading && <div className="loading">Loading experts...</div>}
       {error && <div className="error">{error}</div>}
 
-      {/* Expert Cards */}
       {!loading && !error && (
         <div className="cards-grid">
           {experts.length === 0 ? (
@@ -80,22 +77,13 @@ function ExpertList() {
         </div>
       )}
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="pagination">
-          <button
-            className="btn btn-primary"
-            onClick={() => setPage(p => p - 1)}
-            disabled={page === 1}
-          >
+          <button className="btn btn-primary" onClick={() => setPage(p => p - 1)} disabled={page === 1}>
             Previous
           </button>
           <span style={{padding: '10px'}}>Page {page} of {totalPages}</span>
-          <button
-            className="btn btn-primary"
-            onClick={() => setPage(p => p + 1)}
-            disabled={page === totalPages}
-          >
+          <button className="btn btn-primary" onClick={() => setPage(p => p + 1)} disabled={page === totalPages}>
             Next
           </button>
         </div>
